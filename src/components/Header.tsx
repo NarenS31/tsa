@@ -99,8 +99,9 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
     ({ member: 'Member', submission: 'Submission', deadline: 'Deadline', meeting: 'Meeting' }[type]);
 
   return (
-    <header className="h-14 flex items-center px-6 gap-4 shrink-0 sticky top-0 z-30" style={{ background: '#F7F6F3' }}>
-      <div ref={containerRef} className="relative flex-1 max-w-xl">
+    <header className="sticky top-4 z-40 mx-4 my-2 rounded-3xl border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)] shadow-slate-200/10">
+      <div className="h-14 flex items-center px-4 sm:px-6 gap-4">
+        <div ref={containerRef} className="relative flex-1 max-w-xl">
         <div className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 hover:bg-white hover:border-gray-300 focus-within:bg-white focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
           <Search className="w-4 h-4 text-gray-400 shrink-0" />
           <input
@@ -145,6 +146,7 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
           </div>
         )}
       </div>
+    </div>
     </header>
   );
 }
