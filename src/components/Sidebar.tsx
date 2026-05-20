@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
 import { useRouter } from 'next/navigation';
@@ -45,8 +46,12 @@ export default function Sidebar({ variant }: { variant: 'student' | 'officer' })
   return (
     <aside className="w-56 min-h-screen flex flex-col shrink-0" style={{ background: '#0F0F0F' }}>
       <div className="px-4 py-5" style={{ borderBottom: '1px solid #232323' }}>
-        <div className="flex items-center gap-2.5">
-          <span className="font-bold text-white text-sm tracking-tight">TSA Portal</span>
+        <div className="flex items-center gap-3">
+          <Image src="/mrlogo.png" alt="Marvin Ridge logo" width={36} height={36} className="rounded-full object-cover" />
+          <div>
+            <span className="font-bold text-white text-sm tracking-tight">TSA Portal</span>
+            <p className="text-xs mt-0.5" style={{ color: '#777' }}>Marvin Ridge HS</p>
+          </div>
         </div>
         <div className="mt-3.5">
           {variant === 'student' && currentStudent ? (
