@@ -32,12 +32,13 @@ export const INITIAL_SUBMISSIONS: Submission[] = [
 ];
 
 export const INITIAL_DEADLINES: Deadline[] = [
-  { id: 'd1', title: 'Draft 1 Submissions Due',       date: '2026-05-25T23:59:00Z', description: 'All members must submit their first draft. No extensions without prior approval.', forAll: true },
-  { id: 'd2', title: 'Software Development Demo Day', date: '2026-06-01T09:00:00Z', event: 'Software Development', eventCategory: 'product',      description: 'Live demo of software projects to the officer review panel. Laptops required.', forAll: false },
-  { id: 'd3', title: 'Engineering Design Review',     date: '2026-06-05T14:00:00Z', event: 'Engineering Design',   eventCategory: 'presentation', description: 'Scheduled review session with officer feedback on engineering design presentations.', forAll: false },
-  { id: 'd4', title: 'State Competition Registration',date: '2026-06-10T17:00:00Z', description: 'Final deadline to register all members for state competition. Absolutely no exceptions.', forAll: true },
-  { id: 'd5', title: 'Final Submissions Deadline',    date: '2026-06-15T23:59:00Z', description: 'All final submissions must be uploaded to the portal before midnight.', forAll: true },
-  { id: 'd6', title: 'Presentation Rehearsal Session',date: '2026-06-08T15:00:00Z', description: 'Mandatory rehearsal for all presentation event members. Room 204.', forAll: false },
+  // Season planning: deadlines scheduled between Nov 2026 and Apr 2027
+  { id: 'd1', title: 'Draft 1 Submissions Due',            date: '2026-11-30T23:59:00Z', description: 'All members must submit their first draft. No extensions without prior approval.', forAll: true },
+  { id: 'd2', title: 'Digital Portfolio Draft Due',        date: '2027-02-28T23:59:00Z', description: 'Submit the first draft of your digital portfolio (evidence, artifacts, and documentation).', forAll: true },
+  { id: 'd3', title: 'Portfolio Final Deadline',           date: '2027-03-15T23:59:00Z', description: 'Final version of the digital portfolio due. Make sure all files and links are accessible.', forAll: true },
+  { id: 'd4', title: 'State Competition Registration',     date: '2027-03-25T17:00:00Z', description: 'Final deadline to register all members for the NCTSA State Conference (Apr 9–11, 2027). No exceptions.', forAll: true },
+  { id: 'd5', title: 'Final Submissions Deadline',         date: '2027-03-30T23:59:00Z', description: 'All final submissions must be uploaded to the portal before midnight. No late uploads accepted.', forAll: true },
+  { id: 'd6', title: 'Presentation Rehearsal Session',     date: '2027-04-07T15:00:00Z', description: 'Full run-through of all presentation events. Officers will give timed feedback. Mandatory for all presentation members.', forAll: false },
 ];
 
 export const INITIAL_CONVERSATIONS: Conversation[] = [
@@ -68,37 +69,38 @@ export const INITIAL_MESSAGES: Message[] = [
 ];
 
 export const INITIAL_MEETINGS: Meeting[] = [
+  // Season meetings begin in September 2026 and run through the Spring 2027 competition season
   {
     id: 'meet1', title: 'Weekly Club Meeting',
-    date: '2026-05-28T15:30:00Z', location: 'Room 204',
+    date: '2026-09-15T15:30:00Z', location: 'Room 204',
     description: 'General club meeting. Updates on competition prep, submission deadlines, and Q&A with officers.',
     appliesTo: 'all',
     rsvps: { s1: 'going', s2: 'going', s3: 'going', s5: 'going', s8: 'going', s9: 'not_going' },
   },
   {
     id: 'meet2', title: 'Product Event Workshop',
-    date: '2026-06-03T16:00:00Z', location: 'Computer Lab B',
+    date: '2026-10-10T16:00:00Z', location: 'Computer Lab B',
     description: 'Hands-on workshop for product event members. Bring your project files. Officer feedback session included.',
     appliesTo: 'category', category: 'product',
     rsvps: { s1: 'going', s2: 'going', s11: 'going', s4: 'not_going' },
   },
   {
-    id: 'meet3', title: 'Presentation Rehearsal',
-    date: '2026-06-08T15:00:00Z', location: 'Auditorium A',
-    description: 'Full run-through of all presentation events. Officers will give timed feedback. Mandatory for all presentation members.',
-    appliesTo: 'category', category: 'presentation',
-    rsvps: { s5: 'going', s6: 'going', s7: 'not_going', s12: 'going' },
+    id: 'meet3', title: 'Digital Portfolio Kickoff',
+    date: '2026-11-25T16:00:00Z', location: 'Library',
+    description: 'Kickoff meeting for digital portfolios: scope, required artifacts, and timeline. Recommended for all participants preparing portfolios.',
+    appliesTo: 'all',
+    rsvps: { s1: 'going', s5: 'going', s8: 'going' },
   },
   {
-    id: 'meet4', title: 'Testing Event Study Session',
-    date: '2026-06-11T16:00:00Z', location: 'Library Study Room 3',
-    description: 'Practice problems, algorithm review, and past TSA test walkthroughs. Study guide shared in advance.',
-    appliesTo: 'category', category: 'testing',
-    rsvps: { s8: 'going', s9: 'going', s10: 'not_going' },
+    id: 'meet4', title: 'Presentation Rehearsal',
+    date: '2027-04-07T15:00:00Z', location: 'Auditorium A',
+    description: 'Full run-through of all presentation events. Officers will give timed feedback. Mandatory for presentation members.',
+    appliesTo: 'category', category: 'presentation',
+    rsvps: { s5: 'going', s6: 'going', s12: 'going' },
   },
   {
     id: 'meet5', title: 'Pre-State Send-Off',
-    date: '2026-06-19T17:00:00Z', location: 'Cafeteria',
+    date: '2027-04-08T17:00:00Z', location: 'Cafeteria',
     description: 'Final team meeting before State competition. Travel logistics, last-minute Q&A, and a good luck celebration.',
     appliesTo: 'all',
     rsvps: { s1: 'going', s5: 'going', s8: 'going', s3: 'going' },
@@ -109,7 +111,8 @@ export const DEFAULT_SETTINGS: ClubSettings = {
   clubName: 'Marvin Ridge TSA',
   schoolName: 'Marvin Ridge High School',
   advisorName: 'Mr. Stinson',
-  competitionDate: '2027-04-18',
+  // State competition date updated to NCTSA State Conference (Apr 9–11, 2027)
+  competitionDate: '2027-04-09',
   requiredSubmissions: { draft1: true, draft2: true, final: true, supporting: false },
   notifications: { emailReminders: true, deadlineAlerts: true },
 };
