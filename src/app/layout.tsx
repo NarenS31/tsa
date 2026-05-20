@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'TSA Club Portal',
   description: 'Technology Student Association submission management portal',
+  icons: { icon: '/mrlogo.png' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
