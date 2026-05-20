@@ -35,11 +35,11 @@ export default function OfficerDashboard() {
   const reviewRate = total > 0 ? Math.round((reviewed / total) * 100) : 0;
 
   const statCards = [
-    { label: 'Total Submissions', value: total,         color: 'text-gray-900',   accent: 'border-l-gray-300' },
-    { label: 'Reviewed',          value: reviewed,      color: 'text-green-700',  accent: 'border-l-green-500' },
-    { label: 'Pending Review',    value: pending,       color: 'text-amber-600',  accent: 'border-l-amber-400' },
-    { label: 'Needs Revision',    value: needsRevision, color: 'text-orange-700', accent: 'border-l-orange-500' },
-    { label: 'Missing',           value: missing,       color: 'text-red-600',    accent: 'border-l-red-500' },
+    { label: 'Total Submissions', value: total,         color: 'text-slate-900',   accent: 'border-l-slate-300', description: 'All uploaded entries',        icon: 'TS' },
+    { label: 'Reviewed',          value: reviewed,      color: 'text-emerald-700', accent: 'border-l-emerald-500', description: 'Completed officer reviews',   icon: 'RV' },
+    { label: 'Pending Review',    value: pending,       color: 'text-amber-600',  accent: 'border-l-amber-400',  description: 'Waiting for review',          icon: 'PR' },
+    { label: 'Needs Revision',    value: needsRevision, color: 'text-orange-700', accent: 'border-l-orange-500', description: 'Require student updates',      icon: 'NR' },
+    { label: 'Missing',           value: missing,       color: 'text-rose-600',   accent: 'border-l-rose-500',   description: 'No submission received yet', icon: 'MS' },
   ];
 
   return (
@@ -49,13 +49,22 @@ export default function OfficerDashboard() {
         <p className="text-sm mt-1" style={{ color: '#888' }}>Overview of all TSA club submissions and member activity.</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
         {statCards.map(card => (
-          <div key={card.label} className={`bg-white rounded-xl px-5 py-4 border-l-[3px] ${card.accent}`}>
-            <span className="block text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: '#999' }}>
+          <div
+            key={card.label}
+            className={`group relative overflow-hidden rounded-[1.75rem] border border-slate-200 border-l-[5px] ${card.accent} bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md`}
+          >
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.32em] text-slate-500 mb-3">
               {card.label}
             </span>
-            <p className={`text-4xl font-bold leading-none ${card.color}`}>{card.value}</p>
+            <div className="flex items-center justify-between gap-4">
+              <p className={`text-4xl font-semibold ${card.color}`}>{card.value}</p>
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-sm font-semibold text-slate-700">
+                {card.icon}
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-slate-500">{card.description}</p>
           </div>
         ))}
       </div>
