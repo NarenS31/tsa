@@ -2,15 +2,15 @@
 import { EventCategory } from '@/lib/types';
 
 const CONFIG: Record<EventCategory, { label: string; className: string }> = {
-  product:      { label: 'Product',      className: 'bg-blue-50 text-blue-700 border border-blue-200' },
-  presentation: { label: 'Presentation', className: 'bg-purple-50 text-purple-700 border border-purple-200' },
-  testing:      { label: 'Testing',      className: 'bg-teal-50 text-teal-700 border border-teal-200' },
+  product:      { label: 'Product',      className: 'bg-sky-100/90 text-sky-800 ring-1 ring-sky-200' },
+  presentation: { label: 'Presentation', className: 'bg-violet-100/90 text-violet-800 ring-1 ring-violet-200' },
+  testing:      { label: 'Testing',      className: 'bg-teal-100/90 text-teal-800 ring-1 ring-teal-200' },
 };
 
 export default function CategoryBadge({ category }: { category: EventCategory }) {
   const { label, className } = CONFIG[category];
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${className}`}>
+    <span className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.2em] ${className}`}>
       {label}
     </span>
   );
