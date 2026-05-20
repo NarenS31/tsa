@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
@@ -22,14 +23,23 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: '#F7F6F3' }}>
-      <div className="w-full max-w-md">
-        <div className="flex items-center justify-center gap-2.5 mb-8">
-          <GraduationCap className="w-8 h-8 text-indigo-600" />
-          <span className="text-2xl font-semibold text-gray-900">TSA Portal</span>
-        </div>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10" style={{ background: '#EFF3F8' }}>
+      <div className="w-full max-w-lg">
+        <div className="rounded-[2rem] bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)] border border-white/70 p-8 mb-10">
+          <div className="flex flex-col items-center text-center gap-4 mb-8">
+            <div className="flex items-center justify-center rounded-3xl bg-slate-50 p-4 shadow-sm">
+              <Image src="/mrlogo.png" alt="Marvin Ridge logo" width={72} height={72} className="rounded-2xl" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-indigo-600 mb-2">Marvin Ridge TSA</p>
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Welcome to the TSA Portal</h1>
+            </div>
+            <p className="max-w-xl text-sm text-slate-500">
+              Pick your role to sign in and manage TSA submissions, deadlines, meetings, and officer guidance.
+            </p>
+          </div>
 
-        <div className="border border-[#E0DDD8] rounded-xl bg-white p-8">
+          <div className="grid gap-3">
           <h1 className="text-xl font-bold tracking-tight text-gray-900 mb-1">Welcome back</h1>
           <p className="text-sm mb-8" style={{ color: '#888' }}>Select your role to continue to your dashboard.</p>
 
