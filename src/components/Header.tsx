@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
 import { Search, Users, FileText, CalendarDays, CalendarCheck, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SearchResult {
   id: string;
@@ -18,6 +19,7 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,55 +100,98 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
   const typeLabel2 = (type: SearchResult['type']) =>
     ({ member: 'Member', submission: 'Submission', deadline: 'Deadline', meeting: 'Meeting' }[type]);
 
+  const showDropdown = open && query.length >= 2;
+
   return (
-    <header className="sticky top-4 z-40 mx-4 my-2 rounded-3xl border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)] shadow-slate-200/10">
-      <div className="h-14 flex items-center px-4 sm:px-6 gap-4">
-        <div ref={containerRef} className="relative flex-1 max-w-xl">
-        <div className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 hover:bg-white hover:border-gray-300 focus-within:bg-white focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+    <header className="h-14 flex items-center px-6 shrink-0 bg-white" style={{ borderBottom: '1px solid #f0f0f0' }}>
+      {/* Search — centered in the bar */}
+      <div ref={containerRef} className="relative flex-1 flex justify-center">
+        <div className={`flex items-center gap-2.5 w-full max-w-md transition-all duration-150 ${focused ? 'opacity-100' : 'opacity-80'}`}>
+          <Search className="w-4 h-4 shrink-0" style={{ color: focused ? '#555' : '#aaa' }} />
           <input
             ref={inputRef}
             value={query}
             onChange={e => { setQuery(e.target.value); setOpen(true); }}
-            onFocus={() => setOpen(true)}
-            placeholder="Search members, submissions, deadlines…"
+            onFocus={() => { setOpen(true); setFocused(true); }}
+            onBlur={() => setFocused(false)}
+            placeholder="Search…"
             className="flex-1 text-sm bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
           />
-          {query && (
-            <button onClick={() => { setQuery(''); setOpen(false); }} className="text-gray-400 hover:text-gray-600">
-              <X className="w-3.5 h-3.5" />
-            </button>
+          <AnimatePresence>
+            {query && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.7 }}
+                transition={{ duration: 0.1 }}
+                onClick={() => { setQuery(''); setOpen(false); inputRef.current?.focus(); }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </motion.button>
+            )}
+          </AnimatePresence>
+          {!query && (
+            <kbd className="hidden sm:inline-flex items-center gap-1 text-[10px] text-gray-300 font-medium">
+              <span>⌘</span><span>K</span>
+            </kbd>
           )}
         </div>
 
-        {open && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
-            {results.map((r, i) => (
-              <button
-                key={`${r.id}-${i}`}
-                onClick={() => handleSelect(r.href)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
-              >
-                {typeIcon(r.type)}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{r.title}</p>
-                  <p className="text-xs text-gray-500 truncate">{r.subtitle}</p>
-                </div>
-                <span className="text-xs text-gray-400 shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">
-                  {typeLabel2(r.type)}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Subtle focus underline */}
+        <motion.div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-gray-300"
+          animate={{ width: focused ? '100%' : '0%', maxWidth: '28rem' }}
+          transition={{ duration: 0.2 }}
+          style={{ bottom: '-1px' }}
+        />
 
-        {open && query.length >= 2 && results.length === 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 px-4 py-6 text-center">
-            <p className="text-sm text-gray-500">No results for &quot;{query}&quot;</p>
-          </div>
-        )}
+        <AnimatePresence>
+          {showDropdown && results.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.14 }}
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-full max-w-md bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden"
+            >
+              {results.map((r, i) => (
+                <motion.button
+                  key={`${r.id}-${i}`}
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  onClick={() => handleSelect(r.href)}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                >
+                  {typeIcon(r.type)}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{r.title}</p>
+                    <p className="text-xs text-gray-500 truncate">{r.subtitle}</p>
+                  </div>
+                  <span className="text-xs text-gray-400 shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">
+                    {typeLabel2(r.type)}
+                  </span>
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDropdown && results.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.14 }}
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-full max-w-md bg-white border border-gray-200 rounded-xl shadow-lg z-50 px-4 py-6 text-center"
+            >
+              <p className="text-sm text-gray-500">No results for &quot;{query}&quot;</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
     </header>
   );
 }

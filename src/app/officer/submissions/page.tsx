@@ -6,6 +6,7 @@ import StatusBadge from '@/components/StatusBadge';
 import CategoryBadge from '@/components/CategoryBadge';
 import { Search, Download, CheckCircle, RotateCcw, X, MessageSquare, FileText, ChevronDown } from 'lucide-react';
 import { Submission, SubmissionStatus, EventCategory } from '@/lib/types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -22,14 +23,28 @@ function FeedbackModal({ submission, onClose, onSave }: {
 }) {
   const [text, setText] = useState(submission.feedback ?? '');
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-xl border border-gray-200 w-full max-w-lg shadow-xl">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 12 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+        className="bg-white rounded-xl border border-gray-200 w-full max-w-lg shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
             <h2 className="text-base font-semibold text-gray-900">Leave Feedback</h2>
             <p className="text-xs text-gray-500 mt-0.5">{submission.studentName} · {submission.event} · {typeLabel(submission.submissionType)}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-6 py-4">
           <div className="mb-3 bg-gray-50 rounded-lg px-4 py-3">
@@ -46,19 +61,20 @@ function FeedbackModal({ submission, onClose, onSave }: {
           />
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
           <button
             onClick={() => onSave(text)}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
           >
             <MessageSquare className="w-4 h-4" />
             Save Feedback
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
+
 
 export default function SubmissionsPage() {
   const { submissions, updateSubmissionStatus, addFeedback, showToast } = useApp();
@@ -113,7 +129,12 @@ export default function SubmissionsPage() {
   };
 
   return (
-    <div className="p-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.28, ease: 'easeOut' }}
+      className="p-8"
+    >
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-[22px] font-bold tracking-tight text-gray-900">Submissions</h1>
@@ -138,7 +159,6 @@ export default function SubmissionsPage() {
             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
-
         <div className="relative">
           <select
             value={statusFilter}
@@ -153,7 +173,6 @@ export default function SubmissionsPage() {
           </select>
           <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
-
         <div className="relative">
           <select
             value={categoryFilter}
@@ -191,8 +210,14 @@ export default function SubmissionsPage() {
                   </td>
                 </tr>
               ) : (
-                filtered.map(sub => (
-                  <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
+                filtered.map((sub, i) => (
+                  <motion.tr
+                    key={sub.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.2 }}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600 shrink-0">
@@ -244,7 +269,7 @@ export default function SubmissionsPage() {
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               )}
             </tbody>
@@ -252,13 +277,15 @@ export default function SubmissionsPage() {
         </div>
       </div>
 
-      {feedbackTarget && (
-        <FeedbackModal
-          submission={feedbackTarget}
-          onClose={() => setFeedbackTarget(null)}
-          onSave={handleSaveFeedback}
-        />
-      )}
-    </div>
+      <AnimatePresence>
+        {feedbackTarget && (
+          <FeedbackModal
+            submission={feedbackTarget}
+            onClose={() => setFeedbackTarget(null)}
+            onSave={handleSaveFeedback}
+          />
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
