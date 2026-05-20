@@ -121,3 +121,45 @@ export const EVENTS = {
 };
 
 export const ALL_EVENTS = [...EVENTS.product, ...EVENTS.presentation, ...EVENTS.testing];
+
+export const EVENT_REFERENCE_TEXT = `The portal supports these TSA events:
+- Animatronics: Create an animatronic device with sound, lights, and a display environment to communicate an idea, entertain, or demonstrate a concept.
+- Architectural Design: Develop architectural plans and both physical and computer-generated models, then present and interview as a semifinalist.
+- Audio Podcasting: Produce an original theme-based podcast with storytelling, voice acting, sound effects, and documentation; semifinalists are interviewed.
+- Biotechnology Design: Research a biotechnology problem, develop a solution, create a display and multimedia presentation, and present/interview.
+- Board Game Design: Design, build, and package a board game with creative instructions, pieces, and cards; semifinalists demonstrate gameplay and process.
+- Chapter Team: Take a parliamentary procedure test, then semifinalists conduct opening ceremony, business items, parliamentary actions, and closing ceremony.
+- Children\'s Stories: Create an illustrated children\'s story and development documentation; semifinalists read aloud and answer interview questions.
+- Coding: Qualify with a coding test, then semifinalists develop a software program that addresses an onsite problem.
+- Computer-Aided Design (CAD), Architecture: Use CAD skills to create architectural drawings such as plans, elevations, or ornamentation details; solutions are evaluated with an interview.
+- Computer-Aided Design (CAD), Engineering: Use CAD skills to develop 3D engineering representations of machine parts, tools, or products; solutions are evaluated with an interview.
+- Data Science and Analytics: Identify a societal issue, compile data, produce documentation and a digital poster, then create a synopsis and visualization for semifinals.
+- Debating Technological Issues: Research a technology topic, prepare pro/con debate support materials and references, and compete against another chapter.
+- Digital Video Production: Submit a digital video and documentation portfolio; semifinalists participate in an interview.
+- Dragster Design: Design, draw, and construct a CO2-powered dragster, then compete in a race and interview.
+- Drone Challenge (UAV): Design, build, document, and test fly an open-source UAV with portfolio materials and an interview.
+- Engineering Design: Solve a grand challenge from the National Academy of Engineering with documentation, display, and prototype, then present/interview.
+- Extemporaneous Speech: Prepare a 3-5 minute speech on a TSA or technology topic from topic cards; advancement depends on speech quality.
+- Fashion Design and Technology: Create a wearable garment and documentation portfolio; semifinalists present their design and discuss the process.
+- Flight Endurance: Design, build, and trim a rubber-band powered model aircraft for long endurance flights, with documentation, inspection, and timed flights.
+- Forensic Science: Qualify with a forensic science test, then semifinalists analyze a mock crime scene and produce a written report.
+- Future Technology Teacher: Research developing technology, create a classroom application video and lesson plan, and demonstrate the lesson while answering questions.
+- Geospatial Technology: Interpret geospatial data, create a digital portfolio with maps and documentation, then defend projections and infographics.
+- Manufacturing Prototype: Use CIM to design and fabricate a product, submit documentation, and deliver a sales pitch and demonstration.
+- Music Production: Produce an original musical piece reflecting the theme, submit documentation, and advance based on quality.
+- On Demand Video: Receive challenge criteria at conference, then produce a 60-second film within 36 hours that showcases video skills.
+- Photographic Technology: Create a photographic portfolio based on the theme, complete onsite portfolio work, and advance based on portfolio quality and interview.
+- Prepared Presentation: Deliver a 3-5 minute presentation on the theme with a slide deck; advancement is based on presentation quality.
+- Promotional Design: Produce a promotional resource packet with printed materials and documentation; semifinalists demonstrate publishing competency.
+- Robotics: Design, build, document, and test a robot built from open-source parts to meet theme specifications.
+- Senior Solar Sprint: Design, build, and race a solar-powered vehicle carrying a payload, with documentation of the process.
+- Software Development: Design, implement, test, document, and present a software project of educational or social value.
+- STEM Mass Media: Create an annual theme news story in video and written formats, demonstrating journalism and communication skills.
+- Structural Design and Engineering: Design and build a structure to challenge specifications, then evaluate efficiency with destructive testing.
+- System Control Technology: Solve an onsite industrial problem with a computer-controlled mechanical model, program it, and demonstrate operation.
+- Technology Bowl: Demonstrate TSA and technology knowledge through an objective test, then compete in a team question/response format.
+- Technology Problem Solving: Design and build a solution to a 90-minute onsite problem, evaluated on performance measures such as time or strength.
+- Transportation Modeling: Design a scale vehicle model with a display and documentation portfolio, then describe the vehicle and production process in interview.
+- Video Game Design: Design, build, and launch an E-rated online video game with documentation, then interview about the development.
+- Virtual Reality Simulation (VR): Create a 2-3 minute VR visualization with supporting documentation, present the visualization, and participate in an interview.
+- Webmaster: Design, build, and launch a website addressing the challenge, then interview on the knowledge gained.`;

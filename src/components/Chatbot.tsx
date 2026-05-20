@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/lib/AppContext';
+import { EVENT_REFERENCE_TEXT } from '@/lib/mockData';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 
 interface ChatMessage {
@@ -39,6 +40,9 @@ Submissions: ${mySubmissions.map(s => `${s.submissionType} (${s.status})`).join(
 
 Upcoming deadlines:
 ${deadlines.slice(0, 6).map(d => `- ${d.title}: ${new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`).join('\n')}
+
+Event reference:
+${EVENT_REFERENCE_TEXT}
 
 Help users with TSA-related questions: submission deadlines, event requirements, competition preparation, club logistics, and portal navigation. Be friendly, concise, and encouraging. Keep answers brief and to the point.`;
   };
