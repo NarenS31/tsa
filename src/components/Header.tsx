@@ -103,7 +103,8 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
   const showDropdown = open && query.length >= 2;
 
   return (
-    <header className="h-14 flex items-center px-6 shrink-0 bg-white" style={{ borderBottom: '1px solid #f0f0f0' }}>
+    <header className="sticky top-3 z-40 mx-4 mb-2 shrink-0">
+      <div className="h-12 flex items-center px-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-sm" style={{ border: '1px solid #ececec' }}>
       {/* Search — centered in the bar */}
       <div ref={containerRef} className="relative flex-1 flex justify-center">
         <div className={`flex items-center gap-2.5 w-full max-w-md transition-all duration-150 ${focused ? 'opacity-100' : 'opacity-80'}`}>
@@ -138,13 +139,6 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
           )}
         </div>
 
-        {/* Subtle focus underline */}
-        <motion.div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-gray-300"
-          animate={{ width: focused ? '100%' : '0%', maxWidth: '28rem' }}
-          transition={{ duration: 0.2 }}
-          style={{ bottom: '-1px' }}
-        />
 
         <AnimatePresence>
           {showDropdown && results.length > 0 && (
@@ -191,6 +185,7 @@ export default function Header({ variant }: { variant: 'student' | 'officer' }) 
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
       </div>
     </header>
   );
