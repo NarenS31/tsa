@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
 import Link from 'next/link';
@@ -23,10 +23,6 @@ export default function SubmitPage() {
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 

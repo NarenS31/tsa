@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useApp } from '@/lib/AppContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StatusBadge from '@/components/StatusBadge';
 import { ChevronLeft, FileText, MessageSquare, Upload, ClipboardList } from 'lucide-react';
@@ -21,11 +19,6 @@ function typeLabel(t: Submission['submissionType']) {
 
 export default function HistoryPage() {
   const { currentStudent, submissions, rubricScores } = useApp();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 
