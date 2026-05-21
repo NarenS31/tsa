@@ -61,7 +61,7 @@ export default function Sidebar({ variant }: { variant: 'student' | 'officer' })
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  const handleLogout = () => { logout(); router.push('/'); };
+  const handleLogout = () => { logout(); };
 
   const isActive = (href: string) =>
     href === '/student' || href === '/officer' ? pathname === href : pathname.startsWith(href);

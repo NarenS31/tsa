@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
 import { STUDENTS } from '@/lib/mockData';
 import { Send, Users, User } from 'lucide-react';
@@ -17,14 +16,9 @@ function initials(name: string) { return name.split(' ').map(n => n[0]).join('')
 
 export default function StudentMessagesPage() {
   const { currentStudent, conversations, messages, sendMessage } = useApp();
-  const router = useRouter();
   const [selectedId, setSelectedId] = useState<string>('');
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 

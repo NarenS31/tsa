@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useApp } from '@/lib/AppContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Upload, CalendarDays, ChevronRight, MessageSquare, CheckCircle, Clock, Circle, Trophy } from 'lucide-react';
 import { Submission } from '@/lib/types';
@@ -31,11 +29,6 @@ const STATUS_STYLE = {
 
 export default function StudentDashboard() {
   const { currentStudent, submissions, deadlines, settings } = useApp();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 

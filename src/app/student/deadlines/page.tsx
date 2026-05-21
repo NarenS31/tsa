@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useApp } from '@/lib/AppContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, CalendarDays, Clock } from 'lucide-react';
 
@@ -18,11 +16,6 @@ function formatTime(iso: string) {
 
 export default function StudentDeadlinesPage() {
   const { currentStudent, deadlines } = useApp();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 

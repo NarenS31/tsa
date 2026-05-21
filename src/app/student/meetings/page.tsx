@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/AppContext';
 import { MapPin, Clock, CalendarDays, CheckCircle, XCircle, Globe, Tag } from 'lucide-react';
 import { EventCategory } from '@/lib/types';
@@ -24,11 +22,6 @@ function daysUntil(iso: string) {
 
 export default function StudentMeetingsPage() {
   const { currentStudent, meetings, rsvpMeeting, showToast } = useApp();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!currentStudent) router.push('/');
-  }, [currentStudent, router]);
 
   if (!currentStudent) return null;
 
