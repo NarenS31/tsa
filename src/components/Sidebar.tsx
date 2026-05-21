@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Upload, Clock, CalendarDays, Users, FileCheck,
-  LogOut, MessageSquare, BarChart2, Settings, CalendarCheck, PanelLeft,
+  LogOut, MessageSquare, BarChart2, Settings, CalendarCheck, PanelLeft, BookOpen,
 } from 'lucide-react';
 
 interface NavItem { href: string; label: string; icon: React.ReactNode }
@@ -19,8 +19,9 @@ const STUDENT_NAV: NavItem[] = [
   { href: '/student/submit',    label: 'Submit Work', icon: <Upload size={17} /> },
   { href: '/student/history',   label: 'History',     icon: <Clock size={17} /> },
   { href: '/student/deadlines', label: 'Deadlines',   icon: <CalendarDays size={17} /> },
-  { href: '/student/meetings',  label: 'Meetings',    icon: <CalendarCheck size={17} /> },
-  { href: '/student/messages',  label: 'Messages',    icon: <MessageSquare size={17} /> },
+  { href: '/student/meetings',   label: 'Meetings',    icon: <CalendarCheck size={17} /> },
+  { href: '/student/messages',   label: 'Messages',    icon: <MessageSquare size={17} /> },
+  { href: '/student/resources',  label: 'Resources',   icon: <BookOpen size={17} /> },
 ];
 
 const OFFICER_NAV: NavItem[] = [
@@ -31,6 +32,7 @@ const OFFICER_NAV: NavItem[] = [
   { href: '/officer/meetings',     label: 'Meetings',    icon: <CalendarCheck size={17} /> },
   { href: '/officer/analytics',    label: 'Analytics',   icon: <BarChart2 size={17} /> },
   { href: '/officer/messages',     label: 'Messages',    icon: <MessageSquare size={17} /> },
+  { href: '/officer/resources',    label: 'Resources',   icon: <BookOpen size={17} /> },
   { href: '/officer/settings',     label: 'Settings',    icon: <Settings size={17} /> },
 ];
 

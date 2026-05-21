@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { STUDENTS, EVENTS } from '@/lib/mockData';
-import { Plus, X, MapPin, CalendarDays, Clock, Users, ChevronDown, ChevronUp, Globe, Tag } from 'lucide-react';
-import { EventCategory } from '@/lib/types';
+import { Plus, X, MapPin, Clock, Users, ChevronDown, ChevronUp, Globe, Tag, CheckCircle2, XCircle, MinusCircle } from 'lucide-react';
+import { EventCategory, AttendanceStatus } from '@/lib/types';
 
 const CAT_COLORS: Record<EventCategory, string> = {
   product:      'bg-blue-50 text-blue-700 border-blue-200',
@@ -29,8 +29,14 @@ function getMeetingParticipants(meeting: ReturnType<typeof useApp>['meetings'][0
   return [];
 }
 
+const ATTENDANCE_CONFIG: Record<AttendanceStatus, { label: string; icon: typeof CheckCircle2; active: string; inactive: string }> = {
+  present: { label: 'Present', icon: CheckCircle2, active: 'bg-emerald-100 text-emerald-700 border-emerald-300', inactive: 'text-gray-400 hover:text-emerald-600 hover:bg-emerald-50' },
+  absent:  { label: 'Absent',  icon: XCircle,      active: 'bg-rose-100 text-rose-700 border-rose-300',         inactive: 'text-gray-400 hover:text-rose-600 hover:bg-rose-50' },
+  excused: { label: 'Excused', icon: MinusCircle,  active: 'bg-amber-100 text-amber-700 border-amber-300',      inactive: 'text-gray-400 hover:text-amber-600 hover:bg-amber-50' },
+};
+
 export default function OfficerMeetingsPage() {
-  const { meetings, addMeeting, showToast } = useApp();
+  const { meetings, addMeeting, markAttendance, showToast } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -103,8 +109,10 @@ export default function OfficerMeetingsPage() {
         {isExpanded && (
           <div className="border-t border-gray-100 px-5 py-4 bg-gray-50">
             {m.description && <p className="text-xs text-gray-600 mb-4">{m.description}</p>}
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Attendee List ({participants.length})</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+
+            {/* RSVP list */}
+            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">RSVPs ({participants.length})</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
               {participants.map(student => {
                 const rsvp = m.rsvps[student.id];
                 const badge = rsvp === 'going' ? 'bg-green-50 text-green-700 border-green-200' :
@@ -123,6 +131,52 @@ export default function OfficerMeetingsPage() {
                   </div>
                 );
               })}
+            </div>
+
+            {/* Attendance tracking */}
+            <div className="border-t border-gray-200 pt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Attendance</h4>
+                {(() => {
+                  const marked = participants.filter(s => m.attendance?.[s.id]).length;
+                  return marked > 0 ? (
+                    <span className="text-[10px] text-gray-400">{marked}/{participants.length} marked</span>
+                  ) : (
+                    <span className="text-[10px] text-gray-400 italic">not yet marked</span>
+                  );
+                })()}
+              </div>
+              <div className="space-y-1.5">
+                {participants.map(student => {
+                  const current = m.attendance?.[student.id] ?? null;
+                  return (
+                    <div key={student.id} className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-3 py-2">
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600 shrink-0">
+                        {student.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <p className="text-xs font-medium text-gray-900 flex-1 min-w-0 truncate">{student.name}</p>
+                      <div className="flex gap-1 shrink-0">
+                        {(Object.entries(ATTENDANCE_CONFIG) as [AttendanceStatus, typeof ATTENDANCE_CONFIG[AttendanceStatus]][]).map(([status, cfg]) => {
+                          const Icon = cfg.icon;
+                          const isActive = current === status;
+                          return (
+                            <button
+                              key={status}
+                              onClick={() => markAttendance(m.id, student.id, status)}
+                              title={cfg.label}
+                              className={`w-7 h-7 flex items-center justify-center rounded-md border transition-colors ${
+                                isActive ? cfg.active : `border-transparent ${cfg.inactive}`
+                              }`}
+                            >
+                              <Icon className="w-3.5 h-3.5" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
