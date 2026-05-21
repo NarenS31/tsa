@@ -1,10 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { Student, Submission, Deadline, ToastMessage, UserType, Conversation, Message, Meeting, ClubSettings } from './types';
+import { Student, Submission, Deadline, ToastMessage, UserType, Conversation, Message, Meeting, ClubSettings, Notification, RubricScore, AttendanceStatus } from './types';
 import {
   STUDENTS, INITIAL_SUBMISSIONS, INITIAL_DEADLINES,
   INITIAL_CONVERSATIONS, INITIAL_MESSAGES, INITIAL_MEETINGS, DEFAULT_SETTINGS,
+  INITIAL_NOTIFICATIONS, INITIAL_RUBRIC_SCORES,
 } from './mockData';
 
 interface AppContextValue {
@@ -18,6 +19,8 @@ interface AppContextValue {
   meetings: Meeting[];
   settings: ClubSettings;
   toasts: ToastMessage[];
+  notifications: Notification[];
+  rubricScores: RubricScore[];
   login: (type: UserType, studentId?: string) => void;
   logout: () => void;
   addSubmission: (sub: Omit<Submission, 'id' | 'version' | 'submittedAt'>) => void;
@@ -28,10 +31,14 @@ interface AppContextValue {
   sendMessage: (msg: Omit<Message, 'id' | 'timestamp'>) => void;
   addMeeting: (meeting: Omit<Meeting, 'id' | 'rsvps'>) => void;
   rsvpMeeting: (meetingId: string, studentId: string, status: 'going' | 'not_going') => void;
+  markAttendance: (meetingId: string, studentId: string, status: AttendanceStatus) => void;
   updateSettings: (patch: Partial<ClubSettings>) => void;
   resetAllData: () => void;
   showToast: (message: string, type?: ToastMessage['type']) => void;
   dismissToast: (id: string) => void;
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
+  addRubricScore: (score: Omit<RubricScore, 'id' | 'gradedAt'>) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -47,6 +54,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [meetings, setMeetings] = useState<Meeting[]>(INITIAL_MEETINGS);
   const [settings, setSettings] = useState<ClubSettings>(DEFAULT_SETTINGS);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
+  const [rubricScores, setRubricScores] = useState<RubricScore[]>(INITIAL_RUBRIC_SCORES);
 
   const showToast = useCallback((message: string, type: ToastMessage['type'] = 'success') => {
     const id = Math.random().toString(36).slice(2);
@@ -78,6 +87,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const newSub: Submission = { ...sub, id: `sub${Date.now()}`, version: existingVersions.length + 1, submittedAt: new Date().toISOString() };
       return [newSub, ...prev];
     });
+    // Auto-generate officer notification
+    setNotifications(prev => [{
+      id: `n${Date.now()}`,
+      type: 'submission',
+      title: 'New submission',
+      body: `${sub.studentName} submitted ${sub.submissionType === 'draft1' ? 'Draft 1' : sub.submissionType === 'draft2' ? 'Draft 2' : 'Final'} for ${sub.event}`,
+      href: '/officer/submissions',
+      read: false,
+      createdAt: new Date().toISOString(),
+      forUserId: 'officer',
+    }, ...prev]);
   }, []);
 
   const updateSubmissionStatus = useCallback((id: string, status: Submission['status'], feedback?: string) => {
@@ -87,7 +107,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addFeedback = useCallback((submissionId: string, feedback: string) => {
-    setSubmissions(prev => prev.map(s => s.id === submissionId ? { ...s, feedback } : s));
+    setSubmissions(prev => prev.map(s => {
+      if (s.id !== submissionId) return s;
+      // Auto-generate student notification
+      setNotifications(n => [{
+        id: `n${Date.now()}`,
+        type: 'feedback',
+        title: 'Feedback received',
+        body: `Officer Park left feedback on your ${s.event} submission`,
+        href: '/student/history',
+        read: false,
+        createdAt: new Date().toISOString(),
+        forUserId: s.studentId,
+      }, ...n]);
+      return { ...s, feedback };
+    }));
   }, []);
 
   const addDeadline = useCallback((deadline: Omit<Deadline, 'id'>) => {
@@ -116,6 +150,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ));
   }, []);
 
+  const markAttendance = useCallback((meetingId: string, studentId: string, status: AttendanceStatus) => {
+    setMeetings(prev => prev.map(m =>
+      m.id === meetingId ? { ...m, attendance: { ...m.attendance, [studentId]: status } } : m
+    ));
+  }, []);
+
   const updateSettings = useCallback((patch: Partial<ClubSettings>) => {
     setSettings(prev => ({ ...prev, ...patch }));
   }, []);
@@ -127,15 +167,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setMessages(INITIAL_MESSAGES);
     setMeetings(INITIAL_MEETINGS);
     setSettings(DEFAULT_SETTINGS);
+    setNotifications(INITIAL_NOTIFICATIONS);
+    setRubricScores(INITIAL_RUBRIC_SCORES);
+  }, []);
+
+  const markNotificationRead = useCallback((id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  }, []);
+
+  const markAllNotificationsRead = useCallback(() => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  }, []);
+
+  const addRubricScore = useCallback((score: Omit<RubricScore, 'id' | 'gradedAt'>) => {
+    const newScore: RubricScore = { ...score, id: `rs${Date.now()}`, gradedAt: new Date().toISOString() };
+    setRubricScores(prev => {
+      const filtered = prev.filter(s => s.submissionId !== score.submissionId);
+      return [...filtered, newScore];
+    });
   }, []);
 
   return (
     <AppContext.Provider value={{
       userType, currentStudent, students, submissions, deadlines,
       conversations, messages, meetings, settings, toasts,
+      notifications, rubricScores,
       login, logout, addSubmission, updateSubmissionStatus, addFeedback,
       addDeadline, createConversation, sendMessage, addMeeting, rsvpMeeting,
-      updateSettings, resetAllData, showToast, dismissToast,
+      markAttendance, updateSettings, resetAllData, showToast, dismissToast,
+      markNotificationRead, markAllNotificationsRead, addRubricScore,
     }}>
       {children}
     </AppContext.Provider>

@@ -4,8 +4,9 @@ import { useState, useMemo } from 'react';
 import { useApp } from '@/lib/AppContext';
 import StatusBadge from '@/components/StatusBadge';
 import CategoryBadge from '@/components/CategoryBadge';
-import { Search, Download, CheckCircle, RotateCcw, X, MessageSquare, FileText, ChevronDown } from 'lucide-react';
-import { Submission, SubmissionStatus, EventCategory } from '@/lib/types';
+import { Search, Download, CheckCircle, RotateCcw, X, MessageSquare, FileText, ChevronDown, ClipboardList } from 'lucide-react';
+import { Submission, SubmissionStatus, EventCategory, RubricCriterion } from '@/lib/types';
+import { RUBRIC_CRITERIA_TEMPLATE } from '@/lib/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function formatDate(iso: string) {
@@ -76,13 +77,119 @@ function FeedbackModal({ submission, onClose, onSave }: {
 }
 
 
+function RubricModal({ submission, existingScore, onClose, onSave }: {
+  submission: Submission;
+  existingScore: { criteria: RubricCriterion[]; totalScore: number } | undefined;
+  onClose: () => void;
+  onSave: (criteria: RubricCriterion[]) => void;
+}) {
+  const [scores, setScores] = useState<RubricCriterion[]>(
+    existingScore?.criteria ?? RUBRIC_CRITERIA_TEMPLATE.map(c => ({ ...c, score: 0 }))
+  );
+
+  const total = scores.reduce((sum, c) => sum + c.score, 0);
+  const maxTotal = scores.reduce((sum, c) => sum + c.maxScore, 0);
+  const pct = maxTotal > 0 ? Math.round((total / maxTotal) * 100) : 0;
+
+  const updateScore = (i: number, val: number) => {
+    setScores(prev => prev.map((c, idx) => idx === i ? { ...c, score: Math.min(c.maxScore, Math.max(0, val)) } : c));
+  };
+  const updateComment = (i: number, comment: string) => {
+    setScores(prev => prev.map((c, idx) => idx === i ? { ...c, comment } : c));
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 12 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+        className="bg-white rounded-xl border border-gray-200 w-full max-w-lg shadow-xl max-h-[90vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">Rubric Scoring</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{submission.studentName} · {submission.event} · {typeLabel(submission.submissionType)}</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors"><X className="w-5 h-5" /></button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 px-6 py-4 space-y-4">
+          {scores.map((criterion, i) => (
+            <div key={criterion.label}>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-gray-700">{criterion.label}</label>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    min={0}
+                    max={criterion.maxScore}
+                    value={criterion.score}
+                    onChange={e => updateScore(i, parseInt(e.target.value) || 0)}
+                    className="w-14 text-center px-2 py-1 border border-gray-200 rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <span className="text-xs text-gray-400">/ {criterion.maxScore}</span>
+                </div>
+              </div>
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
+                <div
+                  className="h-full rounded-full bg-indigo-500 transition-all"
+                  style={{ width: `${criterion.maxScore > 0 ? (criterion.score / criterion.maxScore) * 100 : 0}%` }}
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Optional comment..."
+                value={criterion.comment ?? ''}
+                onChange={e => updateComment(i, e.target.value)}
+                className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-100 shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-900">Total Score</span>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-2xl font-bold ${pct >= 90 ? 'text-emerald-600' : pct >= 70 ? 'text-amber-600' : 'text-rose-600'}`}>{total}</span>
+              <span className="text-sm text-gray-400">/ {maxTotal}</span>
+              <span className={`text-xs font-semibold ml-1 px-2 py-0.5 rounded-full ${pct >= 90 ? 'bg-emerald-50 text-emerald-700' : pct >= 70 ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700'}`}>{pct}%</span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="flex-1 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+            <button
+              onClick={() => onSave(scores)}
+              className="flex-1 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <ClipboardList className="w-4 h-4" />
+              Save Score
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function SubmissionsPage() {
-  const { submissions, updateSubmissionStatus, addFeedback, showToast } = useApp();
+  const { submissions, updateSubmissionStatus, addFeedback, addRubricScore, rubricScores, showToast } = useApp();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<SubmissionStatus | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<EventCategory | 'all'>('all');
   const [feedbackTarget, setFeedbackTarget] = useState<Submission | null>(null);
+  const [rubricTarget, setRubricTarget] = useState<Submission | null>(null);
 
   const filtered = useMemo(() => {
     return submissions.filter(s => {
@@ -109,6 +216,15 @@ export default function SubmissionsPage() {
     addFeedback(feedbackTarget.id, feedback);
     showToast('Feedback saved successfully.', 'success');
     setFeedbackTarget(null);
+  };
+
+  const handleSaveRubric = (criteria: RubricCriterion[]) => {
+    if (!rubricTarget) return;
+    const totalScore = criteria.reduce((sum, c) => sum + c.score, 0);
+    const maxScore = criteria.reduce((sum, c) => sum + c.maxScore, 0);
+    addRubricScore({ submissionId: rubricTarget.id, studentId: rubricTarget.studentId, criteria, totalScore, maxScore, gradedBy: 'Officer Park' });
+    showToast('Rubric score saved.', 'success');
+    setRubricTarget(null);
   };
 
   const exportCSV = () => {
@@ -267,6 +383,13 @@ export default function SubmissionsPage() {
                         >
                           <MessageSquare className="w-4 h-4" />
                         </button>
+                        <button
+                          onClick={() => setRubricTarget(sub)}
+                          title="Score Rubric"
+                          className={`p-1.5 rounded-md transition-colors ${rubricScores.some(r => r.submissionId === sub.id) ? 'text-emerald-600 hover:bg-emerald-50' : 'text-gray-400 hover:text-purple-600 hover:bg-purple-50'}`}
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </motion.tr>
@@ -283,6 +406,14 @@ export default function SubmissionsPage() {
             submission={feedbackTarget}
             onClose={() => setFeedbackTarget(null)}
             onSave={handleSaveFeedback}
+          />
+        )}
+        {rubricTarget && (
+          <RubricModal
+            submission={rubricTarget}
+            existingScore={rubricScores.find(r => r.submissionId === rubricTarget.id)}
+            onClose={() => setRubricTarget(null)}
+            onSave={handleSaveRubric}
           />
         )}
       </AnimatePresence>

@@ -1,4 +1,4 @@
-import { Student, Submission, Deadline, Conversation, Message, Meeting, ClubSettings } from './types';
+import { Student, Submission, Deadline, Conversation, Message, Meeting, ClubSettings, Notification, RubricScore } from './types';
 
 export const STUDENTS: Student[] = [
   { id: 's1',  name: 'Alex Chen',       email: 'alex.chen@school.edu',    event: 'Software Development',       eventCategory: 'product',      grade: 11 },
@@ -116,6 +116,72 @@ export const DEFAULT_SETTINGS: ClubSettings = {
   requiredSubmissions: { draft1: true, draft2: true, final: true, supporting: false },
   notifications: { emailReminders: true, deadlineAlerts: true },
 };
+
+export const INITIAL_NOTIFICATIONS: Notification[] = [
+  // Officer notifications
+  { id: 'n1', type: 'submission', title: 'New submission',       body: 'Alex Chen submitted Draft 2 for Software Development',      href: '/officer/submissions', read: false, createdAt: '2026-05-10T09:30:00Z', forUserId: 'officer' },
+  { id: 'n2', type: 'submission', title: 'New submission',       body: 'Riley Thompson submitted Draft 2 for Data Science',          href: '/officer/submissions', read: false, createdAt: '2026-05-14T11:00:00Z', forUserId: 'officer' },
+  { id: 'n3', type: 'submission', title: 'New submission',       body: 'Drew Martinez submitted Final for Computer Science',         href: '/officer/submissions', read: false, createdAt: '2026-05-15T16:00:00Z', forUserId: 'officer' },
+  { id: 'n4', type: 'submission', title: 'New submission',       body: 'Sam Williams submitted Draft 2 for Architectural Design',    href: '/officer/submissions', read: true,  createdAt: '2026-05-12T08:00:00Z', forUserId: 'officer' },
+  { id: 'n5', type: 'meeting',    title: 'Meeting scheduled',    body: 'Weekly Club Meeting on Sep 15 at 3:30 PM in Room 204',       href: '/officer/meetings',    read: true,  createdAt: '2026-05-08T10:00:00Z', forUserId: 'officer' },
+  // Student notifications for Alex Chen (s1)
+  { id: 'n6',  type: 'feedback',   title: 'Feedback received',   body: 'Officer Park left feedback on your Draft 1',                href: '/student/history',     read: false, createdAt: '2026-05-03T14:00:00Z', forUserId: 's1' },
+  { id: 'n7',  type: 'deadline',   title: 'Upcoming deadline',   body: 'Draft 1 Submissions Due on Nov 30, 2026',                   href: '/student/deadlines',   read: false, createdAt: '2026-05-18T09:00:00Z', forUserId: 's1' },
+  { id: 'n8',  type: 'meeting',    title: 'New meeting',         body: 'Weekly Club Meeting scheduled for Sep 15',                  href: '/student/meetings',    read: true,  createdAt: '2026-05-08T10:00:00Z', forUserId: 's1' },
+  // Student notifications for Maya Patel (s2)
+  { id: 'n9',  type: 'feedback',   title: 'Feedback received',   body: 'Officer Park left feedback on your Robotics Draft 1',       href: '/student/history',     read: false, createdAt: '2026-05-04T10:00:00Z', forUserId: 's2' },
+  // Student notifications for Taylor Johnson (s5)
+  { id: 'n10', type: 'feedback',   title: 'Feedback received',   body: 'Officer Chen left feedback on your Draft 1',                href: '/student/history',     read: false, createdAt: '2026-05-05T16:00:00Z', forUserId: 's5' },
+  { id: 'n11', type: 'feedback',   title: 'Feedback received',   body: 'Officer Park reviewed your Draft 2 — great progress!',      href: '/student/history',     read: true,  createdAt: '2026-05-13T09:00:00Z', forUserId: 's5' },
+];
+
+export const RUBRIC_CRITERIA_TEMPLATE = [
+  { label: 'Problem Identification', maxScore: 15 },
+  { label: 'Design & Planning',      maxScore: 20 },
+  { label: 'Technical Execution',    maxScore: 25 },
+  { label: 'Documentation Quality', maxScore: 20 },
+  { label: 'Innovation',             maxScore: 10 },
+  { label: 'Completeness',           maxScore: 10 },
+];
+
+export const INITIAL_RUBRIC_SCORES: RubricScore[] = [
+  {
+    id: 'rs1', submissionId: 'sub1', studentId: 's1',
+    criteria: [
+      { label: 'Problem Identification', score: 13, maxScore: 15 },
+      { label: 'Design & Planning',      score: 16, maxScore: 20 },
+      { label: 'Technical Execution',    score: 19, maxScore: 25, comment: 'Good implementation but needs more edge-case handling' },
+      { label: 'Documentation Quality', score: 15, maxScore: 20 },
+      { label: 'Innovation',             score:  8, maxScore: 10 },
+      { label: 'Completeness',           score:  8, maxScore: 10 },
+    ],
+    totalScore: 79, maxScore: 100, gradedBy: 'Officer Park', gradedAt: '2026-05-03T14:00:00Z',
+  },
+  {
+    id: 'rs2', submissionId: 'sub4', studentId: 's3',
+    criteria: [
+      { label: 'Problem Identification', score: 14, maxScore: 15 },
+      { label: 'Design & Planning',      score: 19, maxScore: 20 },
+      { label: 'Technical Execution',    score: 24, maxScore: 25 },
+      { label: 'Documentation Quality', score: 19, maxScore: 20 },
+      { label: 'Innovation',             score:  9, maxScore: 10 },
+      { label: 'Completeness',           score: 10, maxScore: 10 },
+    ],
+    totalScore: 95, maxScore: 100, gradedBy: 'Officer Chen', gradedAt: '2026-05-07T11:00:00Z',
+  },
+  {
+    id: 'rs3', submissionId: 'sub6', studentId: 's5',
+    criteria: [
+      { label: 'Problem Identification', score: 12, maxScore: 15 },
+      { label: 'Design & Planning',      score: 15, maxScore: 20 },
+      { label: 'Technical Execution',    score: 18, maxScore: 25, comment: 'Literature review needs expansion' },
+      { label: 'Documentation Quality', score: 16, maxScore: 20 },
+      { label: 'Innovation',             score:  7, maxScore: 10 },
+      { label: 'Completeness',           score:  8, maxScore: 10 },
+    ],
+    totalScore: 76, maxScore: 100, gradedBy: 'Officer Chen', gradedAt: '2026-05-05T16:00:00Z',
+  },
+];
 
 export const EVENTS = {
   product:      ['Software Development', 'Robotics', 'Computer Aided Design', 'Architectural Design'],

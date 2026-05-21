@@ -2,6 +2,7 @@ export type EventCategory = 'product' | 'presentation' | 'testing';
 export type SubmissionStatus = 'pending' | 'reviewed' | 'needs_revision' | 'missing';
 export type SubmissionType = 'draft1' | 'draft2' | 'final' | 'supporting';
 export type UserType = 'student' | 'officer';
+export type AttendanceStatus = 'present' | 'absent' | 'excused';
 
 export interface Student {
   id: string;
@@ -74,6 +75,7 @@ export interface Meeting {
   category?: EventCategory;
   studentIds?: string[];
   rsvps: Record<string, 'going' | 'not_going'>;
+  attendance?: Record<string, AttendanceStatus>;
 }
 
 export interface ClubSettings {
@@ -86,4 +88,33 @@ export interface ClubSettings {
     emailReminders: boolean;
     deadlineAlerts: boolean;
   };
+}
+
+export interface Notification {
+  id: string;
+  type: 'feedback' | 'deadline' | 'meeting' | 'submission' | 'attendance';
+  title: string;
+  body: string;
+  href: string;
+  read: boolean;
+  createdAt: string;
+  forUserId: string; // student id or 'officer'
+}
+
+export interface RubricCriterion {
+  label: string;
+  score: number;
+  maxScore: number;
+  comment?: string;
+}
+
+export interface RubricScore {
+  id: string;
+  submissionId: string;
+  studentId: string;
+  criteria: RubricCriterion[];
+  totalScore: number;
+  maxScore: number;
+  gradedBy: string;
+  gradedAt: string;
 }

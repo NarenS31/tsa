@@ -5,7 +5,7 @@ import { useApp } from '@/lib/AppContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StatusBadge from '@/components/StatusBadge';
-import { ChevronLeft, FileText, MessageSquare, Upload } from 'lucide-react';
+import { ChevronLeft, FileText, MessageSquare, Upload, ClipboardList } from 'lucide-react';
 import { Submission } from '@/lib/types';
 
 function formatDate(iso: string) {
@@ -20,7 +20,7 @@ function typeLabel(t: Submission['submissionType']) {
 }
 
 export default function HistoryPage() {
-  const { currentStudent, submissions } = useApp();
+  const { currentStudent, submissions, rubricScores } = useApp();
   const router = useRouter();
 
   useEffect(() => {
@@ -110,6 +110,45 @@ export default function HistoryPage() {
                         </div>
                       </div>
                     )}
+                    {(() => {
+                      const rubric = rubricScores.find(r => r.submissionId === sub.id);
+                      if (!rubric) return null;
+                      const pct = Math.round((rubric.totalScore / rubric.maxScore) * 100);
+                      const color = pct >= 90 ? 'emerald' : pct >= 70 ? 'amber' : 'rose';
+                      return (
+                        <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <ClipboardList className="w-3.5 h-3.5 text-gray-500" />
+                              <p className="text-xs font-semibold text-gray-700">Rubric Score</p>
+                              <p className="text-[10px] text-gray-400">by {rubric.gradedBy}</p>
+                            </div>
+                            <div className="flex items-baseline gap-1">
+                              <span className={`text-lg font-bold text-${color}-600`}>{rubric.totalScore}</span>
+                              <span className="text-xs text-gray-400">/ {rubric.maxScore}</span>
+                              <span className={`text-xs font-bold ml-1 px-1.5 py-0.5 rounded-full bg-${color}-50 text-${color}-700`}>{pct}%</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1.5">
+                            {rubric.criteria.map(c => (
+                              <div key={c.label}>
+                                <div className="flex items-center justify-between text-[11px] mb-0.5">
+                                  <span className="text-gray-600">{c.label}</span>
+                                  <span className="text-gray-500 font-medium">{c.score}/{c.maxScore}</span>
+                                </div>
+                                <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full bg-indigo-400"
+                                    style={{ width: `${c.maxScore > 0 ? (c.score / c.maxScore) * 100 : 0}%` }}
+                                  />
+                                </div>
+                                {c.comment && <p className="text-[10px] text-gray-400 mt-0.5 italic">{c.comment}</p>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ))}
               </div>
