@@ -38,7 +38,6 @@ export default function OfficerDashboard() {
   const recent       = [...submissions].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()).slice(0, 5);
 
   const daysToComp   = Math.ceil((new Date(settings.competitionDate).getTime() - Date.now()) / 86400000);
-  const compUrgency  = daysToComp <= 30 ? 'text-red-600 bg-red-50 ring-red-200' : daysToComp <= 60 ? 'text-amber-600 bg-amber-50 ring-amber-200' : 'text-gray-600 bg-gray-100 ring-gray-200';
 
   const byCategory = [
     { label: 'Product',      count: submissions.filter(s => s.eventCategory === 'product').length,      color: 'bg-blue-500',   light: 'bg-blue-100' },
@@ -71,19 +70,36 @@ export default function OfficerDashboard() {
       className="p-6"
     >
       {/* ── Hero ── */}
-      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+      <div className="mb-6 bg-white border border-gray-100 rounded-2xl px-6 py-5 shadow-sm flex items-center justify-between gap-4 flex-wrap">
         <div>
+          <p className="text-xs font-medium text-gray-400 mb-1.5">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} · Marvin Ridge TSA
+          </p>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Officer Dashboard</h1>
-          <p className="text-sm text-gray-400 mt-1">Marvin Ridge TSA · {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ${compUrgency}`}
+          className={`flex items-center gap-4 px-5 py-3.5 rounded-xl border ${
+            daysToComp <= 30
+              ? 'bg-red-50 border-red-200'
+              : daysToComp <= 60
+              ? 'bg-amber-50 border-amber-200'
+              : 'bg-indigo-50 border-indigo-200'
+          }`}
         >
-          <Trophy className="w-3.5 h-3.5" />
-          {daysToComp} days to State
+          <Trophy className={`w-5 h-5 shrink-0 ${
+            daysToComp <= 30 ? 'text-red-500' : daysToComp <= 60 ? 'text-amber-500' : 'text-indigo-500'
+          }`} />
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">State Competition</p>
+            <p className={`text-xl font-bold leading-none ${
+              daysToComp <= 30 ? 'text-red-700' : daysToComp <= 60 ? 'text-amber-700' : 'text-indigo-700'
+            }`}>
+              {daysToComp} <span className="text-sm font-normal text-gray-400">days away</span>
+            </p>
+          </div>
         </motion.div>
       </div>
 
