@@ -68,7 +68,7 @@ export default function OfficerDashboard() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28 }}
-      className="p-6 max-w-6xl"
+      className="p-6"
     >
       {/* ── Hero ── */}
       <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">

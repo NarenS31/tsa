@@ -97,7 +97,7 @@ export default function MembersPage() {
       transition={{ duration: 0.28, ease: 'easeOut' }}
       className="min-h-screen bg-gray-50"
     >
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="px-6 py-10">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Member management</h1>
           <p className="text-sm text-gray-500 mt-1">Manage your club members and their event assignments here.</p>
